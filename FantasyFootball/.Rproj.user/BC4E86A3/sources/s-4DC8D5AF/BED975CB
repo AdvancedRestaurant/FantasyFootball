@@ -1,0 +1,32 @@
+{
+    "id": "BED975CB",
+    "path": null,
+    "project_path": null,
+    "type": "r_dataframe",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1609268632982.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "expression": "QB19YR",
+        "caption": "QB19YR",
+        "totalObservations": "71",
+        "displayedObservations": "71",
+        "variables": "27",
+        "cacheKey": "EA8C2A46",
+        "object": "QB19YR",
+        "environment": "",
+        "contentUrl": "grid_resource/gridviewer.html?env=&obj=QB19YR&cache_key=EA8C2A46&max_cols=50",
+        "preview": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 2334956331019297133,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1609268632982,
+    "read_only": false,
+    "read_only_alternatives": []
+}
