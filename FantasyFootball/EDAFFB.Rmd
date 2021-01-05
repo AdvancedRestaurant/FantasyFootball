@@ -19,6 +19,8 @@ When you click the **Knit** button a document will be generated that includes bo
 library(dplyr)
 library(MASS)
 library(ggrepel)
+library(plotly)
+#Data wrangling 
 
 #data from https://www.fantasyfootballdatapros.com/csv_files. 
 FFB2015 <- read.csv("D:/FFball/yearly/2015A.csv") 
@@ -87,6 +89,7 @@ WR17YR <- WR17YR %>%
   mutate(FantasyPointsAvg = ifelse(GS!=0, FantasyPoints/GS,0))#Added average fantasy points per games played 
 WR17YR[,"FantasyPointsAvg"]<- round(WR17YR$FantasyPointsAvg, digit =2)#rounded to 2 decimal points
 
+#Data for 2019 season
 #Adding rank to QB19YR
 QB19YR <- QB19YR %>% 
     arrange(desc(FantasyPoints)) %>%
@@ -102,6 +105,7 @@ WR19YR <- WR19YR %>%
     arrange(desc(FantasyPoints)) %>%
     mutate(rank = 1:nrow(WR19YR))
 
+#Data for 2018 season
 #Adding rank to QB18YR
 QB18YR <- QB18YR %>% 
     arrange(desc(FantasyPoints)) %>%
@@ -117,6 +121,7 @@ WR18YR <- WR18YR %>%
     arrange(desc(FantasyPoints)) %>%
     mutate(rank = 1:nrow(WR18YR))
 
+#Data for 2017 season
 #Adding rank to QB17YR
 QB17YR <- QB17YR %>% 
     arrange(desc(FantasyPoints)) %>%
@@ -132,13 +137,55 @@ WR17YR <- WR17YR %>%
     arrange(desc(FantasyPoints)) %>%
     mutate(rank = 1:nrow(WR17YR))
 
-#plotting rank and fantasy points
-QB19plot <- ggplot(QB19YR, aes(x = rank, y = FantasyPoints))+
-    geom_point(color = dplyr::case_when(QB19YR$rank <= 5 ~ "#d95f02",
-                                        QB19YR$rank >= 6 & QB19YR$rank <=10 ~ "#1be9e7",
-                                        TRUE ~ "#7570b3"),
-               size = 3, alpha =0.5)
+
 
 ```
 
+```{r}
+#QB analysis 
+
+# Setting global option for infinite overlaps 
+options(ggrepel.max.overlaps = Inf)
+#plotting rank and fantasy points
+QB19plot <- ggplot(QB19YR, aes(x = rank, y = FantasyPoints, label = Player))+
+    geom_point(color = dplyr::case_when(QB19YR$rank <= 5 ~ "#d95f02",
+                                        QB19YR$rank >= 6 & QB19YR$rank <=10 ~ "#1be9e7",
+                                        TRUE ~ "#7570b3"),
+               size = 4, alpha =0.6)
+#Text labels without interactive 
+QB19plotlab <- QB19plot +
+    xlim(-10,40)+
+    geom_text_repel(
+        force = 0.5,
+        data = subset(QB19YR, rank < 15),
+        nudge_x =  -(36 - subset(QB19YR, rank <15)$rank),
+        direction = "y",
+        size = 3,
+        hjust = 1,
+        segment.size = 0.2,
+        segment.alpha = 0.35,
+        segment.curvature = -0.1,
+        min.segment.length = 0, 
+        box.padding = 0.4, 
+        max.overlaps = 15)
+
+QB19plotlab
+
+#Plot with interactives
+QB19plotInt<- ggplot(QB19YR, aes(x = rank, y = FantasyPoints,label = Player))+
+    geom_point(color = dplyr::case_when(QB19YR$rank <= 5 ~ "#d95f02",
+                                        QB19YR$rank >= 6 & QB19YR$rank <=10 ~ "#1be9e7",
+                                        TRUE ~ "#7570b3"),
+               size = 3, alpha =0.6) +
+    xlim(-0.25,40)+
+    geom_text(
+        data = QB19YR %>% dplyr::filter(rank <=1),
+        aes(label = Player),
+        nudge_x = 1,
+        nudge_y = -10,
+        check_overlap =F
+    )
+
+ggplotly(QB19plotInt)
+```
 
