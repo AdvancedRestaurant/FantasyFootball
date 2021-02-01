@@ -23,11 +23,11 @@ library(plotly)
 #Data wrangling 
 
 #data from https://www.fantasyfootballdatapros.com/csv_files. 
-FFB2015 <- read.csv("D:/FFball/yearly/2015A.csv") 
-FFB2016 <- read.csv("D:/FFball/yearly/2016A.csv") 
-FFB2017 <- read.csv("D:/FFball/yearly/2017A.csv") 
-FFB2018 <- read.csv("D:/FFball/yearly/2018A.csv") 
-FFB2019 <- read.csv("D:/FFball/yearly/2019A.csv")
+FFB2015 <- read.csv("D:/FantasyFootball/yearly/2015A.csv") 
+FFB2016 <- read.csv("D:/FantasyFootball/yearly/2016A.csv") 
+FFB2017 <- read.csv("D:/FantasyFootball/yearly/2017A.csv") 
+FFB2018 <- read.csv("D:/FantasyFootball/yearly/2018A.csv") 
+FFB2019 <- read.csv("D:/FantasyFootball/yearly/2019A.csv")
 
 QB15YR <- dplyr::filter(FFB2015, Pos == "QB") #Quarterbacks from 2015
 RB15YR <- dplyr::filter(FFB2015, Pos == "RB") #Running backs from 2015
@@ -50,11 +50,23 @@ RB19YR <- dplyr::filter(FFB2019, Pos == "RB") #Running backs from 2019
 WR19YR <- dplyr::filter(FFB2019, Pos == "WR") #Wide receivers from 2019
 
 
-#Separated yearly 2019 by position 
+#Separated yearly 2019 by position
+#QB19 data cleaning and advanced stats 
 QB19YR <- QB19YR %>%
   mutate(FantasyPointsAvg = ifelse(GS!=0, FantasyPoints/GS,0))#Added average QB fantasy points per games played 
 QB19YR[,"FantasyPointsAvg"]<- round(QB19YR$FantasyPointsAvg, digit =2)#rounded to 2 decimal points
 QB19YR <- subset(QB19YR, GS >=4) #Subset QB who have played 4 or more games in the year 
+QB19YR <- subset(QB19YR, select = -c(AttQB, YdsQB, AttRush, YdsRush)) #Removing duplicate columns
+
+
+QB19YR <- QB19YR %>%
+  mutate(CompPct = (Cmp/PassingAtt) * 100)#Added completion percentage
+QB19YR[,"CompPct"]<- round(QB19YR$CompPct, digit =2)#rounded to 2 decimal points
+
+QB19YR <- QB19YR %>%
+  mutate(TDPct = (PassingTD/PassingAtt) * 100)#Added Touchdown percentage
+QB19YR[,"TDPct"]<- round(QB19YR$TDPct, digit =2)#rounded to 2 decimal points
+
 
 RB19YR <- RB19YR %>%
   mutate(FantasyPointsAvg = ifelse(GS!=0, FantasyPoints/GS,0))#Added average fantasy points per games played 
@@ -131,7 +143,7 @@ WR18YR <- WR18YR %>%
 #Adding rank to QB17YR
 QB17YR <- QB17YR %>% 
     arrange(desc(FantasyPoints)) %>%
-    mutate(rank = 1:nrow(QB19YR))
+    mutate(rank = 1:nrow(QB17YR))
 
 #Adding rank to RB17YR
 RB17YR <- RB17YR %>% 
@@ -238,5 +250,12 @@ QB19plotIntA<- ggplot(QB19YRA, aes(x = rank, y = FantasyPointsAvg,label = Player
     )
 
 ggplotly(QB19plotIntA)
+```
+
+```{r}
+#R shiny 
+library(shiny)
+runExample("01_hello")
+
 ```
 
